@@ -1,0 +1,33 @@
+{
+  "status": "initial smoke only; full qualification pending",
+  "compiler": "IREE (https://iree.dev):\n  IREE compiler version 3.11.0rc20260316 @ e4a3b0405d7d23554da26403658d0e8c3c5ecf25\n  LLVM version 23.0.0git\n  Optimized build\n",
+  "command": [
+    "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/.venv/bin/iree-compile",
+    "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/inputs/fragment.mlir",
+    "--iree-hal-target-backends=llvm-cpu",
+    "--iree-llvmcpu-target-cpu=host",
+    "-o",
+    "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/.work/fragment.vmfb"
+  ],
+  "compile_seconds": 0.3140665650025767,
+  "driver": "local-sync",
+  "artifact_sha256": "5d460007565444b0ebee26391f080567a0eb6d6c17bf0b8534d2a8e6ba632c24",
+  "cases": [
+    {
+      "batch": 1,
+      "max_abs_error": 5.138867678056158e-07,
+      "passed": true
+    },
+    {
+      "batch": 7,
+      "max_abs_error": 4.657849331124453e-06,
+      "passed": true
+    },
+    {
+      "batch": 64,
+      "max_abs_error": 6.020215764124259e-06,
+      "passed": true
+    }
+  ],
+  "compile_stderr": ""
+}

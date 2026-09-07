@@ -1,0 +1,25 @@
+{
+  "cpu": 0,
+  "seed": 20260906,
+  "shape": {
+    "id": "dynamic",
+    "m": "?",
+    "k": 32,
+    "n": 16,
+    "batches": [
+      1,
+      7,
+      64
+    ],
+    "input": "inputs/dynamic.mlir"
+  },
+  "artifacts": {
+    "untiled": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/local-20260906/artifacts/dynamic-untiled/module.vmfb",
+    "tiled": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/local-20260906/artifacts/dynamic-tiled/module.vmfb"
+  },
+  "samples": 61,
+  "mode": "cold",
+  "batch": 1,
+  "entry": "row_sum",
+  "artifact": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/local-20260906/artifacts/dynamic-tiled/module.vmfb"
+}

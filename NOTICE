@@ -1,0 +1,10 @@
+Tensor Lowering Qualification
+Copyright 2026 JUNRUI DUAN
+
+This project uses IREE (https://github.com/iree-org/iree) and LLVM/MLIR
+(https://github.com/llvm/llvm-project), licensed under Apache License 2.0
+with LLVM Exceptions. Retained compiled artifacts and lowered IR are generated
+by those projects. See LICENSE for the full license and exceptions.
+
+Developed with AI assistance. Repository ownership and local validation do not
+imply an upstream contribution or maintainer endorsement.

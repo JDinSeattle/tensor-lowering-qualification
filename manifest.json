@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "seed": 20260906,
+  "dtype": "float32",
+  "driver": "local-sync",
+  "runtime_threads": 1,
+  "rtol": 2e-05,
+  "atol": 2e-05,
+  "finite_reference": "float64 accumulation; float32 runtime inputs",
+  "special_values": "NaN/positive infinity/negative infinity masks must match; signed zeros compare numerically",
+  "layout": "C-contiguous required; strided inputs rejected by contract",
+  "shapes": [
+    {
+      "id": "tiny",
+      "m": 1,
+      "k": 32,
+      "n": 16,
+      "batches": [
+        1
+      ],
+      "input": "inputs/tiny.mlir"
+    },
+    {
+      "id": "tail",
+      "m": 7,
+      "k": 33,
+      "n": 17,
+      "batches": [
+        7
+      ],
+      "input": "inputs/tail.mlir"
+    },
+    {
+      "id": "aligned",
+      "m": 64,
+      "k": 64,
+      "n": 32,
+      "batches": [
+        64
+      ],
+      "input": "inputs/aligned.mlir"
+    },
+    {
+      "id": "dynamic",
+      "m": "?",
+      "k": 32,
+      "n": 16,
+      "batches": [
+        1,
+        7,
+        64
+      ],
+      "input": "inputs/dynamic.mlir"
+    }
+  ],
+  "configurations": {
+    "untiled": [
+      "--iree-opt-data-tiling=false"
+    ],
+    "tiled": [
+      "--iree-opt-data-tiling=true"
+    ]
+  }
+}

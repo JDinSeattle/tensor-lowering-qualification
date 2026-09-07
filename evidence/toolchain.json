@@ -1,0 +1,11 @@
+{
+  "compiler_iree_commit": "e4a3b0405d7d23554da26403658d0e8c3c5ecf25",
+  "runtime_iree_commit": "e4a3b0405d7d23554da26403658d0e8c3c5ecf25",
+  "compiler_package": "3.11.0",
+  "runtime_package": "3.11.0",
+  "runtime_internal_version": "3.11.0rc20260316",
+  "observed_by": ".venv/bin/python: import iree.runtime.version; print(VERSION, REVISIONS)",
+  "python": "3.12.13",
+  "host": "Intel Core i9-13900K",
+  "status": "Observed from the installed compiler and runtime used for evidence/local-20260906."
+}

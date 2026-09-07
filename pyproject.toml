@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tensor-lowering-qualification"
+version = "0.1.0"
+description = "Evidence-led qualification of IREE tensor lowering on a fixed CPU target"
+requires-python = ">=3.12,<3.13"
+dependencies = ["iree-base-compiler==3.11.0", "iree-base-runtime==3.11.0", "numpy==2.5.3"]
+
+[project.scripts]
+tensor-qualify = "tensor_qualification.qualify:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
