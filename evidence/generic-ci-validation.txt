@@ -1,0 +1,18 @@
+Verified 478 files, 192 numerical cases, 24 paired workloads, 48 cold starts
+compiled tiny/untiled
+compiled tiny/tiled
+compiled tail/untiled
+compiled tail/tiled
+compiled aligned/untiled
+compiled aligned/tiled
+compiled dynamic/untiled
+compiled dynamic/tiled
+correctness tiny: 32 cases
+correctness tail: 32 cases
+correctness aligned: 32 cases
+correctness dynamic: 96 cases
+measured tiny
+measured tail
+measured aligned
+measured dynamic
+PASS 192 cases; report: /home/postedism/Desktop/compliers/B-tensor-lowering-qualification/.work/generic-ci-validation/REPORT.md
