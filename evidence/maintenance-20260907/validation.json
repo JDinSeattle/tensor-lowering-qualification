@@ -1,0 +1,75 @@
+{
+  "started_utc": "2026-09-07T23:28:09.542053+00:00",
+  "environment": {
+    "mode": "local_cpu_no_gpu_execution",
+    "os": "Linux-7.0.0-29-generic-x86_64-with-glibc2.43",
+    "python": "Python 3.12.13",
+    "cpu": "13th Gen Intel(R) Core(TM) i9-13900K",
+    "scope": "C hardware/sanitizer evidence is historical; B measures shared local physical CPU; no new hosted CI"
+  },
+  "commands": [
+    {
+      "name": "pytest",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/pytest.xml"
+      ],
+      "cwd": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "duration_s": 0.9652909959986573,
+      "log": "evidence/maintenance-20260907/pytest.log",
+      "log_sha256": "fd3a290c832a31e10c8d5d10e03efaeeea78abcbee5757f9871d5410a522a1cc"
+    },
+    {
+      "name": "retained",
+      "argv": [
+        ".venv/bin/python",
+        "tools/verify_evidence.py",
+        "evidence/local-20260906"
+      ],
+      "cwd": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "duration_s": 0.11402619600994512,
+      "log": "evidence/maintenance-20260907/retained.log",
+      "log_sha256": "1bd8395735f35c54e7c4f223cdc879b14aa1fc0cd7e3e8ee9f484088685df271"
+    },
+    {
+      "name": "qualification",
+      "argv": [
+        ".venv/bin/python",
+        "-m",
+        "tensor_qualification.qualify",
+        "--output",
+        "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run",
+        "--samples",
+        "61"
+      ],
+      "cwd": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "duration_s": 8.531959854997694,
+      "log": "evidence/maintenance-20260907/qualification.log",
+      "log_sha256": "665a769a405f2a1f7b5e65b1e01ecd565b193627945678ea659d7e665488293e"
+    },
+    {
+      "name": "verify-new",
+      "argv": [
+        ".venv/bin/python",
+        "tools/verify_evidence.py",
+        "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run"
+      ],
+      "cwd": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification",
+      "environment_overrides": {},
+      "exit_code": 0,
+      "duration_s": 0.06411309599934611,
+      "log": "evidence/maintenance-20260907/verify-new.log",
+      "log_sha256": "1bd8395735f35c54e7c4f223cdc879b14aa1fc0cd7e3e8ee9f484088685df271"
+    }
+  ],
+  "finished_utc": "2026-09-07T23:28:19.220743+00:00"
+}

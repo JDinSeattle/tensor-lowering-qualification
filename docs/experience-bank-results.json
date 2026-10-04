@@ -1,0 +1,21 @@
+{
+  "experience_id": "project-jdinseattle-tensor-lowering-qualification",
+  "source": "experience bank snapshot; user confirmed these results were obtained in a separate cloud test run",
+  "recorded_update": "2026-09-28T05:51:11.700448+00:00",
+  "bullets": [
+    "Built an IREE 3.11.0 / MLIR linalg matmul+bias+ReLU qualification on LLVM CPU (local-sync) with a 24-test CPU suite: functional inputs are runtime parameters and static mode fixes shapes only, so the same compiled artifact receives different values and the comparison remains runtime computation rather than constant folding.",
+    "Produced 192 numerical records over 48 static/dynamic configurations (24 semantic workloads, each repeated 4 times) checked against an independent CPU FP64 reference: elementwise NaN/Inf masks and sign checks first, then absolute/relative errors and input-dependent forward bounds for finite values (accumulation estimate gamma_K = K*u/(1-K*u) with u = 2^-24, plus bias and output rounding), with ReLU handled as non-expansive and no widened thresholds to hide anomalies.",
+    "Compared tiled vs untiled lowering with the same CPU target and thread settings: M=64,N=128,K=256 measured p50=240 μs untiled vs 215 μs tiled (speedup 1.116), tiled API geomean about 1.114 and about 1.108 across two rounds, while a small shape regressed from 39 μs to 44 μs (12.8%) — per-case ratios and the worst case are retained, so this is not a uniform kernel speedup.",
+    "Fixed synchronous output ownership: results are mapped while the session is valid, copied through the buffer protocol and returned as caller-held NumPy arrays; in a controlled lifecycle fixture, executing a different input and closing the session made the old view path read reused values, while the copy adapter's 50 rounds stayed unchanged — a demonstration for this local-sync adapter, not a claim that IREE mapping APIs are generally buggy.",
+    "Timed 31 randomized tiled/untiled pairs only after they passed the numerical gates, and collected 48 cold observations as one fresh process per configuration (2×24) whose statistics include module load and first invoke; those overheads stay out of the steady-state API medians, and API timing includes the Python call, transfer and the ownership copy."
+  ],
+  "scope_limits": [
+    "CPU-only, fixed to the IREE 3.11.0 local-sync adapter; asynchronous devices need an extra synchronization contract and were not covered.",
+    "The ownership fixture shows the risk and the copy fix for one controlled lifecycle; it does not claim that all IREE mapping APIs are generally buggy, and no upstream fix was accepted.",
+    "Tiled geomean about 1.114 and 1.108 is not a uniform kernel speedup: per-case ratios and the worst case are retained, including a small shape regressing 39→44 μs (12.8%).",
+    "API timings include the Python call, transfer and the ownership copy, so gains are not kernel-only; steady-state medians exclude cold module-load and first-invoke overheads, which are reported separately in the 48 fresh-process observations.",
+    "192 records are 48 configurations × 4 repetitions, not 48 × 4 × 4; different rounds are recorded separately.",
+    "No production deployment or GPU execution; results come from one Ryzen 9 7950X / Ubuntu 24.04 / Python 3.12.13 / NumPy 2.5.3 host."
+  ],
+  "local_implementation_boundary": "Only the IREE local-sync CPU adapter is qualified. The local update also removes optimization-mode bypasses in evidence admission; it does not remeasure the reported performance."
+}
