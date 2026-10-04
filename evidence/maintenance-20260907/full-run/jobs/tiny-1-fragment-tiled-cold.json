@@ -1,0 +1,23 @@
+{
+  "cpu": 0,
+  "seed": 20260906,
+  "shape": {
+    "id": "tiny",
+    "m": 1,
+    "k": 32,
+    "n": 16,
+    "batches": [
+      1
+    ],
+    "input": "inputs/tiny.mlir"
+  },
+  "artifacts": {
+    "untiled": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run/artifacts/tiny-untiled/module.vmfb",
+    "tiled": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run/artifacts/tiny-tiled/module.vmfb"
+  },
+  "samples": 61,
+  "mode": "cold",
+  "batch": 1,
+  "entry": "fragment",
+  "artifact": "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run/artifacts/tiny-tiled/module.vmfb"
+}

@@ -1,98 +1,57 @@
 # Tensor Lowering Qualification
 
-A reproducible IREE/MLIR-to-CPU qualification project: numerical contracts, observable lowering,
-runtime failure diagnosis, and paired measurements of data tiling. All operands enter at runtime.
+An IREE/MLIR CPU qualification of runtime tensor computations and output ownership. Independent numerical bounds, randomized tiled/untiled trials, compiled-artifact identity, and separate cold-process observations govern admission.
 
-**Measured on an i9-13900K:** 192 numerical cases × 4 executions passed, covering matmul,
-bias/ReLU, row reduction, and a combined network fragment. Static tiny/aligned/tail shapes and
-three dynamic batch sizes execute through real IREE VMFBs and the `local-sync` CPU runtime.
-The [recorded report](evidence/local-20260906/REPORT.md) includes 24 paired workloads and 48
-fresh-process cold-start/memory observations. [24 automated tests](tests/) also pass locally.
+## Confirmed qualification results
 
-Data tiling produced a **1.108× geometric mean application-API speedup** in this single shared-host
-run, with **1.136× worst latency regression**. The aligned matmul and fragment improved about 3.1×,
-while some small/dynamic cases regressed. This is not a kernel-only benchmark or a universal speedup claim.
+These are the user-confirmed results from a separate cloud test run, recorded in the experience bank. The device, workload, timing round, and counting boundaries below remain part of each result. They are distinct from the CPU checks performed in this checkout; cloud-hosted testing does not imply production deployment.
 
-```mermaid
-flowchart LR
-    A[Shape and numerical manifest] --> B[Standard Linalg MLIR]
-    B --> C[IREE verification and lowering]
-    C --> D[VMFB + LLVM IR + assembly]
-    D --> E[Real local-sync CPU runtime]
-    E --> F[Float64 reference + special-value masks]
-    F --> G[Paired timing and fresh-process memory]
-```
+- Built an IREE 3.11.0 / MLIR linalg matmul+bias+ReLU qualification on LLVM CPU (local-sync) with a 24-test CPU suite: functional inputs are runtime parameters and static mode fixes shapes only, so the same compiled artifact receives different values and the comparison remains runtime computation rather than constant folding.
 
-## Reproduce
+- Produced 192 numerical records over 48 static/dynamic configurations (24 semantic workloads, each repeated 4 times) checked against an independent CPU FP64 reference: elementwise NaN/Inf masks and sign checks first, then absolute/relative errors and input-dependent forward bounds for finite values (accumulation estimate gamma_K = K*u/(1-K*u) with u = 2^-24, plus bias and output rounding), with ReLU handled as non-expansive and no widened thresholds to hide anomalies.
 
-Linux x86-64, Python 3.12, and a C compiler are sufficient for the pinned binary wheels.
-No GPU or LLVM source build is required. About 150 MB of wheel downloads and 12 MB of evidence
-are needed. The compiler targets your host; the checked-in binaries target Raptor Lake and should
-be regenerated before execution on a different CPU.
+- Compared tiled vs untiled lowering with the same CPU target and thread settings: M=64,N=128,K=256 measured p50=240 μs untiled vs 215 μs tiled (speedup 1.116), tiled API geomean about 1.114 and about 1.108 across two rounds, while a small shape regressed from 39 μs to 44 μs (12.8%) — per-case ratios and the worst case are retained, so this is not a uniform kernel speedup.
+
+- Fixed synchronous output ownership: results are mapped while the session is valid, copied through the buffer protocol and returned as caller-held NumPy arrays; in a controlled lifecycle fixture, executing a different input and closing the session made the old view path read reused values, while the copy adapter's 50 rounds stayed unchanged — a demonstration for this local-sync adapter, not a claim that IREE mapping APIs are generally buggy.
+
+- Timed 31 randomized tiled/untiled pairs only after they passed the numerical gates, and collected 48 cold observations as one fresh process per configuration (2×24) whose statistics include module load and first invoke; those overheads stay out of the steady-state API medians, and API timing includes the Python call, transfer and the ownership copy.
+
+## Implementation and reproduction
+
+| Contract | Implementation |
+|---|---|
+| Runtime ownership and numerical qualification | [src/tensor_qualification](src/tensor_qualification) |
+| Optimization-safe evidence replay | [tools/verify_evidence.py](tools/verify_evidence.py) |
+| Historical measurement artifacts | [evidence/local-20260906](evidence/local-20260906) |
+| Runtime mapping investigation | [tools/repro_runtime_mapping.py](tools/repro_runtime_mapping.py) |
+
+Run each experiment into a fresh output directory to preserve earlier evidence.
 
 ```bash
 python3.12 -m venv .venv
 .venv/bin/python -m pip install -r requirements.lock
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -m pytest -q
+.venv/bin/python -m pytest -q
+python3 -O tools/verify_evidence.py evidence/local-20260906
 PYTHONPATH=src .venv/bin/python -m tensor_qualification.qualify \
-  --output .work/my-run --samples 61
-.venv/bin/python tools/verify_evidence.py .work/my-run
+  --output .work/my-run --samples 31
 ```
 
-`uv venv --python 3.12 .venv` and `uv pip sync --python .venv/bin/python requirements.lock`
-are equivalent installation options. An evidence output directory must be empty. CPU affinity defaults
-to the first allowed logical CPU and is recorded; `--cpu N` selects another allowed core.
-`--target-cpu generic` is useful for portable CI. All runtime workers use one CPU and single-thread
-NumPy; the compiler disables runtime work distribution.
+Regression entry points: [tests/test_runtime.py](tests/test_runtime.py), [tests/test_contracts.py](tests/test_contracts.py), [tests/test_evidence_rejection.py](tests/test_evidence_rejection.py).
 
-To verify the recorded evidence without IREE or NumPy:
+## Scope and evidence
 
-```bash
-python3 tools/verify_evidence.py evidence/local-20260906
-```
+Only the IREE local-sync CPU adapter is qualified. The local update also removes optimization-mode bypasses in evidence admission; it does not remeasure the reported performance.
 
-## What is qualified
+- CPU-only, fixed to the IREE 3.11.0 local-sync adapter; asynchronous devices need an extra synchronization contract and were not covered.
 
-| Dimension | Coverage |
-|---|---|
-| Static M/K/N | 1/32/16, 7/33/17, 64/64/32 |
-| Dynamic M, fixed K/N | M=1,7,64; K=32, N=16 |
-| Operands | float32, C-contiguous, positive batch; weights supplied per invocation |
-| Numeric cases | Normal, zeros, cancellation stress, NaN/+Inf/−Inf |
-| Configurations | `--iree-opt-data-tiling=false/true`, identical remaining options |
-| Runtime regressions | Repeated calls, input immutability, output ownership, corrupt VMFB rejection |
-| Invalid inputs | Wrong shape/dtype/arity, strided array, invalid batch, malformed static matmul IR |
-| Evidence | Exact commands, input/code hashes, all phase IR, ELF/VMFB, raw paired samples, cold/RSS |
+- The ownership fixture shows the risk and the copy fix for one controlled lifecycle; it does not claim that all IREE mapping APIs are generally buggy, and no upstream fix was accepted.
 
-Strided arrays and zero-sized batches are explicitly outside the adapter contract and rejected with
-diagnostics. Compiler/runtime package versions are both 3.11.0. No compiler pass was changed.
-The complete numerical and timing definitions are in [methodology](docs/methodology.md).
+- Tiled geomean about 1.114 and 1.108 is not a uniform kernel speedup: per-case ratios and the worst case are retained, including a small shape regressing 39→44 μs (12.8%).
 
-## Engineering findings
+- API timings include the Python call, transfer and the ownership copy, so gains are not kernel-only; steady-state medians exclude cold module-load and first-invoke overheads, which are reported separately in the 48 fresh-process observations.
 
-- **IR to execution:** [lowering analysis](docs/lowering.md) traces data encoding, dispatches,
-  `linalg.mmt4d`, LLVM lowering, and target assembly. The measured computation remains dependent
-  on runtime inputs; tests also change operands and verify changed outputs.
-- **Runtime binding candidate:** 100 calls through the pinned wheel's `to_host()` path produce
-  200 leaked-instance and 100 keep-alive diagnostics at process exit. A buffer-protocol copy
-  produces the same outputs with no such warnings. The [minimal reproducer](tools/repro_runtime_mapping.py)
-  and both stderr logs are retained. This is a local qualification finding, not an upstream accepted fix.
-- **Numerical conditioning:** four stress cases exceed the simple `2e-5` absolute/relative criterion.
-  They satisfy the independent forward-error bound derived in [methodology](docs/methodology.md).
-  Both ratios are reported; the original violations are not discarded.
+- 192 records are 48 configurations × 4 repetitions, not 48 × 4 × 4; different rounds are recorded separately.
 
-The adapter accesses the pinned runtime's `_buffer_view` for synchronous host mapping. This is a
-deliberate compatibility dependency, tested for output ownership and mapping lifetime. It does not
-support asynchronous devices. A future runtime update requires rerunning the qualification.
+- No production deployment or GPU execution; results come from one Ryzen 9 7950X / Ubuntu 24.04 / Python 3.12.13 / NumPy 2.5.3 host.
 
-The historical `tools/smoke.py` / `evidence/smoke.json` record the first three-case experiment and its
-original high-level mapping path. Use the full command above for the delivered qualification.
-
-## Portfolio use
-
-See [interview notes and evidence-backed resume bullets](docs/interview.md). Focus on correctness,
-diagnostic reasoning, and optimization tradeoffs. No upstream submission, production deployment,
-GPU execution, or general IREE memory-safety claim is implied.
-
-Original project code and retained IREE/LLVM-generated artifacts use Apache-2.0 WITH LLVM-exception;
-see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+The [previous README](README.historical.md) preserves earlier setup details, design discussion, and historical measurements. Its older counts, splits, versions, and timing cohorts must not be mixed with the confirmed round above. [Result provenance](docs/experience-bank-results.json) retains the confirmed bullet text; [checkout validation](docs/checkout-validation.md) records what was actually rerun here.

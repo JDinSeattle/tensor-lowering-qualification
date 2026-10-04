@@ -1,0 +1,32 @@
+[
+  {
+    "command": [
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/.venv/bin/python",
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/tools/repro_runtime_mapping.py",
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run/artifacts/dynamic-tiled/module.vmfb",
+      "--mode",
+      "to-host"
+    ],
+    "returncode": 0,
+    "exit_leak_warning": true,
+    "mode": "to-host",
+    "iterations": 100,
+    "numerical_pass": true,
+    "peak_process_rss_kib": 38464
+  },
+  {
+    "command": [
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/.venv/bin/python",
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/tools/repro_runtime_mapping.py",
+      "/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/evidence/maintenance-20260907/full-run/artifacts/dynamic-tiled/module.vmfb",
+      "--mode",
+      "buffer-copy"
+    ],
+    "returncode": 0,
+    "exit_leak_warning": false,
+    "mode": "buffer-copy",
+    "iterations": 100,
+    "numerical_pass": true,
+    "peak_process_rss_kib": 38408
+  }
+]

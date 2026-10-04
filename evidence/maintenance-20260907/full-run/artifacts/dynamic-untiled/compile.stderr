@@ -1,0 +1,4 @@
+/home/postedism/Desktop/compliers/B-tensor-lowering-qualification/inputs/dynamic.mlir:2:1: remark: Executable benchmarks were requested but none were generated. Run with --debug-only=iree-dump-executable-benchmarks for more details.
+
+module {
+^
