@@ -1,6 +1,6 @@
 # Checkout validation
 
-This local validation is separate from the user-confirmed cloud results in the README.
+This local validation is separate from the cloud results in the README.
 
 26 tests passed; python -O verifier accepted retained evidence (478 files, 192 numerical cases, 24 paired workloads, 48 cold starts). Rehashed failed summaries were rejected with and without -O.
 

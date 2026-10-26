@@ -2,9 +2,9 @@
 
 An IREE/MLIR CPU qualification of runtime tensor computations and output ownership. Independent numerical bounds, randomized tiled/untiled trials, compiled-artifact identity, and separate cold-process observations govern admission.
 
-## Confirmed qualification results
+## Results
 
-These are the user-confirmed results from a separate cloud test run, recorded in the experience bank. The device, workload, timing round, and counting boundaries below remain part of each result. They are distinct from the CPU checks performed in this checkout; cloud-hosted testing does not imply production deployment.
+These results come from a separate cloud test run. The device, workload, timing round, and counting boundaries below remain part of each result. They are distinct from the CPU checks performed in this checkout; cloud-hosted testing does not imply production deployment.
 
 - Built an IREE 3.11.0 / MLIR linalg matmul+bias+ReLU qualification on LLVM CPU (local-sync) with a 24-test CPU suite: functional inputs are runtime parameters and static mode fixes shapes only, so the same compiled artifact receives different values and the comparison remains runtime computation rather than constant folding.
 
@@ -54,4 +54,4 @@ Only the IREE local-sync CPU adapter is qualified. The local update also removes
 
 - No production deployment or GPU execution; results come from one Ryzen 9 7950X / Ubuntu 24.04 / Python 3.12.13 / NumPy 2.5.3 host.
 
-The [previous README](README.historical.md) preserves earlier setup details, design discussion, and historical measurements. Its older counts, splits, versions, and timing cohorts must not be mixed with the confirmed round above. [Result provenance](docs/experience-bank-results.json) retains the confirmed bullet text; [checkout validation](docs/checkout-validation.md) records what was actually rerun here.
+The [previous README](README.historical.md) preserves earlier setup details, design discussion, and historical measurements. Its older counts, splits, versions, and timing cohorts must not be mixed with the cloud results above. [Checkout validation](docs/checkout-validation.md) records what was actually rerun here.

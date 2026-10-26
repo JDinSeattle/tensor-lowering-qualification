@@ -21,11 +21,9 @@ remains the matched compiler/runtime stable pin. The 2026-09-07 release feed con
 mapping path and a synchronous CPU device; moving to a new runtime would require repeating
 ownership, lifetime and numerical qualification. No dependency upgrade was justified here.
 
-The portfolio [market review](../../D-bounded-pass-selection/docs/market-review-20260907.md)
-prioritized frozen-experiment integrity in project D because existing bank projects already
-cover general backend scheduling and deployment. B retains its distinctive MLIR-to-runtime
-numerical/lifecycle scope. B's implementation is unchanged; new validation, documentation
-and bank records are local only. The old GitHub CI result was inspected from retained evidence,
+This repository retains its distinctive MLIR-to-runtime
+numerical/lifecycle scope. Its implementation is unchanged; new validation and documentation
+are local only. The old GitHub CI result was inspected from retained evidence,
 not rerun remotely. No GPU, cloud, production or accepted upstream contribution is claimed.
 
 The older standalone B checksum verifier still relies on normal Python assertions; the

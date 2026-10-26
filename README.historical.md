@@ -90,10 +90,9 @@ support asynchronous devices. A future runtime update requires rerunning the qua
 The historical `tools/smoke.py` / `evidence/smoke.json` record the first three-case experiment and its
 original high-level mapping path. Use the full command above for the delivered qualification.
 
-## Portfolio use
+## Scope
 
-See [interview notes and evidence-backed resume bullets](docs/interview.md). Focus on correctness,
-diagnostic reasoning, and optimization tradeoffs. No upstream submission, production deployment,
+No upstream submission, production deployment,
 GPU execution, or general IREE memory-safety claim is implied.
 
 Original project code and retained IREE/LLVM-generated artifacts use Apache-2.0 WITH LLVM-exception;
